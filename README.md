@@ -1,6 +1,6 @@
-#OpenMP for Python
+# OpenMP for Python
 
-######黎才华，李卓翰
+黎才华，李卓翰
 
 ##代码执行方法
 
