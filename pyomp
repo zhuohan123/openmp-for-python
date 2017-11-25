@@ -1,0 +1,7 @@
+#!/bin/bash
+
+python2.7 ./lib/cpu_count.py > cpu_count.txt
+python2.7 ./lib/delete_empty_lines.py $1 > ./tmp/no_blank_line.py
+python2.7 ./lib/parse_omp.py ./tmp/no_blank_line.py > ./tmp/log_omp.txt
+python2.7 ./lib/tree.py ./tmp/no_blank_line.py > ./tmp/log_code.txt
+./lib/transform ./tmp/no_blank_line.py ./tmp/log_code.txt ./tmp/log_omp.txt $2 2>/tmp/null

@@ -1,0 +1,103 @@
+function begin hello_world 4
+variable 6 10 omp load
+variable 6 37 omp load
+variable 7 4 a store
+variable 10 25 omp load
+variable 10 47 omp load
+variable 11 19 str load
+variable 11 23 a load
+function end hello_world 12
+variable 13 0 hello_world load
+variable 14 0 num_step store
+variable 15 0 step store
+variable 15 13 num_step load
+function begin calc_pi 16
+variable 17 4 ans store
+variable 19 4 tid store
+variable 19 10 omp load
+variable 20 4 nthrds store
+variable 20 13 omp load
+variable 21 24 str load
+variable 21 28 tid load
+variable 21 43 str load
+variable 21 47 nthrds load
+variable 22 4 tmp_ans store
+for begin 23
+variable 23 8 i store
+variable 23 13 xrange load
+variable 23 20 tid load
+variable 23 25 num_step load
+variable 23 35 nthrds load
+variable 24 8 x store
+variable 24 13 i load
+variable 24 24 step load
+variable 25 8 tmp_ans store
+variable 25 32 x load
+variable 25 36 x load
+for end 26
+variable 26 4 ans load
+variable 26 8 tid load
+variable 26 15 tmp_ans load
+variable 28 10 sum load
+variable 28 14 ans load
+variable 28 21 step load
+function end calc_pi 29
+variable 29 0 calc_pi load
+function begin calc_pi_for 30
+variable 31 4 ans store
+variable 32 4 lock store
+variable 32 11 omp load
+for begin 35
+variable 35 8 i store
+variable 35 13 xrange load
+variable 35 20 num_step load
+variable 36 8 x store
+variable 36 13 i load
+variable 36 24 step load
+variable 37 8 ans store
+variable 37 28 x load
+variable 37 32 x load
+for end 38
+variable 39 10 ans load
+variable 39 16 step load
+function end calc_pi_for 40
+variable 40 0 calc_pi_for load
+function begin calc_pi_critical 41
+variable 42 4 ans store
+variable 43 4 lock store
+variable 43 11 omp load
+for begin 46
+variable 46 8 i store
+variable 46 13 xrange load
+variable 46 20 num_step load
+variable 47 8 x store
+variable 47 13 i load
+variable 47 24 step load
+variable 49 8 ans store
+variable 49 28 x load
+variable 49 32 x load
+for end 50
+variable 52 10 ans load
+variable 52 16 step load
+function end calc_pi_critical 53
+variable 53 0 calc_pi_critical load
+function begin sections_test 54
+variable 58 30 str load
+variable 58 34 omp load
+variable 61 30 str load
+variable 61 34 omp load
+function end sections_test 62
+variable 65 0 sections_test load
+function begin barrier_test 66
+variable 68 10 str load
+variable 68 14 omp load
+variable 69 4 time load
+variable 69 15 random load
+variable 71 10 str load
+variable 71 14 omp load
+variable 72 4 time load
+variable 72 15 random load
+variable 74 10 str load
+variable 74 14 omp load
+function end barrier_test 75
+variable 76 0 barrier_test load

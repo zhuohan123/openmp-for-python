@@ -1,0 +1,44 @@
+parallel 8 begin
+num_threads 4
+parallel 12 end
+parallel 18 begin
+num_threads 8
+private_var i
+private_var tid
+private_var nthrds
+private_var tmp_ans
+private_var x
+parallel 27 end
+parallel 33 begin
+num_threads 8
+private_var i
+private_var x
+for 34
+reduction + ans
+nowait False
+scheduling_type static
+parallel 38 end
+parallel 44 begin
+num_threads 8
+private_var i
+private_var x
+for 45
+nowait False
+scheduling_type static
+critical 48 begin
+critical 50 end
+parallel 51 end
+parallel 55 begin
+num_threads 2
+sections 56 begin
+section 57 begin
+section 59 end
+section 60 begin
+section 62 end
+sections 63 end
+parallel 64 end
+parallel 67 begin
+num_threads 0
+barrier 70
+barrier 73
+parallel 75 end
