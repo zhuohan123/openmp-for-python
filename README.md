@@ -2,7 +2,7 @@
 
 黎才华，李卓翰
 
-##代码执行方法
+## 代码执行方法
 
 1. 进入lib文件夹，使用make命令编译
 2. 在主文件夹中对于任意的python程序x.py，可用如下指令生成对应的翻译后的y.py
@@ -13,17 +13,17 @@
 ~~~
 
 
-##问题描述
+## 问题描述
 
-###Python的多线程现状
+### Python的多线程现状
 
 众所周知，Python语言的多线程并行并不好用。其中的一个原因，就是GIL（Global Interpreter Lock）的影响。这是Python解释器的实现CPython引入的概念。由于CPython的内存管理不是线程安全的，因此CPython引入了一个全局信号量来迫使在同一时间只能有一个线程在运行Python的解释器。因此，Python的多线程 (import threading) 是伪多线程。事实上还会出现多线程跑的比单线程慢的情况。虽然这只是Python的其中一个解释器的问题（如Jython等其他实现就没有这种问题）但由于Cpython的广泛使用，这个问题还是比较严重。
 
-###OpenMP
+### OpenMP
 
 OpenMP是一种并行程序的编译指导方案，使用Shared Memory Model，支持C/C++/Fortran。简单易用，支持多种并行编程的模型。并且在实现上，OpenMP是先将源代码翻译为对应的Pthreads代码，然后再由一般的编译器进行编译。
 
-###我们的问题
+### 我们的问题
 
 我们的目标是为Python实现一个多线程并行OpenMP，让添加指令后的程序即使在没有OpenMP的情况下也能够被解释执行，即将代码
 
@@ -47,9 +47,9 @@ for i in range(8):
 
 然后再将转换后的程序交由非CPython的Python解释（如Jython）执行。
 
-##实现方案
+## 实现方案
 
-###实现语句总表
+### 实现语句总表
 
 ~~~python
 #omp parallel [end] [num_threads(n)] [private(v1, v2, …)]
@@ -64,7 +64,7 @@ omp.get_num_threads()
 omp.set_num_threads(n)
 ~~~
 
-###Parallel语句
+### Parallel语句
 
 我们整个项目的前半期主要都围绕着如何将parallel语句并行化展开的。我们主要利用了Python可以在函数内部定义函数的性质，我们直接在需要并行的代码块处原地定义一个新的函数，然后再在后面补充相应的对于threading库的调用。我们用
 
@@ -130,7 +130,7 @@ def f():
 ~~~
 
 
-###For语句
+### For语句
 
 对于for语句，我们将对于range/xrange的循环与对一般的列表的分开处理。对于range/xrange的循环，例如：
 
@@ -216,7 +216,7 @@ s += tmp_s
 +, -, *, max, min, &, |, ^, and, or
 ~~~
 
-###Sections语句
+### Sections语句
 
 对于如下语句
 
@@ -244,7 +244,7 @@ for i in range(2):
         B
 ~~~
 
-###Critical语句
+### Critical语句
 
 critical语句用来确保每条语句在同一时刻只会被一个线程执行，它由用加减锁操作来完成。在翻译源程序时，每碰到一个新的critical语句，分配一个新的全局锁，在代码段前加锁，代码段后解锁。即代码
 
@@ -262,7 +262,7 @@ x
 omp.unset_lock()
 ~~~
 
-###Barrier语句
+### Barrier语句
 
 Barrier语句的形式为
 
@@ -307,7 +307,7 @@ class _Barrier:
 
 另外，for、sections后均默认存在一个barrier，For的barrier可显式的由nowait指令取消。
 
-##测试集设计
+## 测试集设计
 
 我们针对不同的目标设计了两类测试集：
 
@@ -316,10 +316,10 @@ class _Barrier:
 
 注意：等价性以及正确性的定义是：编译器按OpenMP指令进行编译且运行结果符合编写者的意图，而不完全是编译前后的两个程序输出完全一样（显然不合理且不可能）。
 
-###第一类测试集
+### 第一类测试集
 第一类测试集主要关注于全面测试已提供的所有语句的正确性，目的在于用最简单易懂的测试样例说明我们的操作是正确的，为此，附上编译前后的代码，以及比较程序的输出结果予以说明。该测试暂时不考虑性能问题，性能问题会在第二类测试集中涉及。
 
-####0.Variable
+#### 0.Variable
 该测试数据并没有任何OpenMP语句，但其判断变量是否需要替换，以及如何替换，关系重大。基本原则是：global变量不替换，local变量放入dictionary并进行替换，介于local和global的变量按python 3中nonlocal语句的逻辑由内向外找然后替换，特殊的local变量如lambda和comprehension中的以及声明了private的local变量不替换。
 
 编译前：
@@ -420,7 +420,7 @@ hello world
 2
 ~~~
 
-####1.	Parallel
+#### 1.	Parallel
 
 Parallel是最基本的语句，如上所述，主要通过新建并行块函数并在末尾用threading多次调用（封装在omp.parallel_run中）以实现多线程。该语句最能体现使用了多线程。编译前：
 
@@ -492,7 +492,7 @@ i love bianyishixi!
 a = 2017
 ~~~
 
-####2.Sections
+#### 2.Sections
 
 Sections语句主要利用了下面将要介绍的for语句搭配if语句实现，不需要原地新建函数，与源代码一一对应关系简洁明了。注意默认末尾会添加omp.barrier()（后面将介绍）。
 
@@ -559,7 +559,7 @@ section 0 from 0
 section 1 from 1
 ~~~
 
-####3.For + reduction + dynamic
+#### 3.For + reduction + dynamic
 
 For+reduction的组合是最常用的语句，也是最能体现并行加速效果的语句，关键在于for的多个循环的如何分配给不同线程（使用plist/dlist/prange/drange），以及reduction时需要加锁。另外，此处需要variable替换策略的一点点配合，也即需要新的临时变量存储每个线程的累加/累乘信息，在最后汇总也需要variable替换策略的配合。
 
@@ -626,7 +626,7 @@ pass
 3.14159265359
 ~~~
 
-####4.	For + critical + nowait
+#### 4.	For + critical + nowait
 
 虽然同样在计算pi的问题中，使用reduction减少了使用锁的次数，会比使用critical（每次累加都需要加锁解锁）要好，但该数据只为了呈现critical的作用，关注点在于正确性，暂时不考虑性能问题。
 
@@ -694,7 +694,7 @@ pass
 3.14159265359
 ~~~
 
-####5.	Barrier
+#### 5.	Barrier
 
 在输出a和b之间没有barrier，所以a和b理应会混杂着输出，而输出c之前有barrier，所以快的程序会等待慢的程序，然后连续输出c。
 
@@ -769,7 +769,7 @@ pass
 2 c
 ~~~
 
-####6.	Nowait
+#### 6.	Nowait
 
 该组测试数据比较特殊，需比较是否包含nowait的两组程序的输出，然后才能体现nowait的作用。也即有nowait时，运行得快的程序会先运行程序后面的部分，先输出done，而没有nowait时，运行得快的程序需要等待慢的程序。
 
@@ -855,7 +855,7 @@ done
 done
 ~~~
 
-####7. MatrixMultiple
+#### 7. MatrixMultiple
 
 除单元测试外，我们也在一般的程序上做了测试，如矩阵乘法就是其中之一，其代码如下：
 
@@ -890,9 +890,9 @@ print matrixMul(n, a, b)
 
 对于较大的n，我们的程序仍能输出正确的结果。
 
-###第二类测试集：
+### 第二类测试集：
 
-####1.	求和问题测试程序：
+#### 1.	求和问题测试程序：
 
 ~~~python
 import omp
@@ -917,7 +917,7 @@ print count(500000000)
 |  1   | 20.10s |
 |  4   | 9.17s  |
 
-####2.	求pi问题测试程序：
+#### 2.	求pi问题测试程序：
 
 ~~~python
 import omp
@@ -945,7 +945,7 @@ calc_pi_for()
 |  1   | 10.57s |
 |  4   | 4.99s  |
 
-##完成情况与存在的问题
+## 完成情况与存在的问题
 
 我们完成了开题报告中的全部目标。但我们的项目仍存在一些问题：
 
@@ -954,7 +954,7 @@ calc_pi_for()
 - 原理上的问题
   - 没有从根本上解决GIL的问题，Jython的通用性、对三方库的支持、以及效率都不能达到CPython的水准
 
-##致谢
+## 致谢
 - 感谢所有成员的付出与合作
 - 感谢老师和助教的指导
 - 感谢其他同学的建议与支持
